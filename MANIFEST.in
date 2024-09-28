@@ -1,0 +1,2 @@
+recursive-include src/ia/wayback_custom_view/templates *
+exclude src/ia/wayback_custom_view/templates/test_app/*

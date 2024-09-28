@@ -1,0 +1,30 @@
+[build-system]
+# v64 and above for editable installs
+requires = ["setuptools>=64", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "wayback-custom-view"
+dynamic = ["version"]
+description = "A custom view for Wayback Machine"
+authors = [
+  { name = "Kenji Nagahashi", email = "kenji@archive.com" }
+]
+license = { text = "AGPLv3" }
+requires-python = ">=3.8"
+dependencies = [
+]
+
+[project.optional-dependencies]
+dev = [
+  "werkzeug",
+  "jinja2",
+  "urllib3"
+]
+
+[tool.setuptools.dynamic]
+version = {attr = "ia.wayback_custom_view.__version__"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+exclude = ["test_*"]
