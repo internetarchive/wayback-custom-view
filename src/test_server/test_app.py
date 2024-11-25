@@ -14,6 +14,20 @@ class CustomViewTestApp:
 
     def __init__(self):
         self.tmplenv = Environment(loader=PackageLoader('ia.wayback_custom_view', 'templates'))
+        self.csp_header = ' '.join([
+            "default-src 'self'",
+            "'unsafe-eval'",
+            "'unsafe-inline'",
+            "data:",
+            "blob:",
+            "archive.org",
+            "web.archive.org",
+            "web-static.archive.org",
+            "wayback-api.archive.org",
+            "athena.archive.org",
+            "analytics.archive.org",
+            "pragma.archivelab.org"
+        ])
 
     def __call__(self, environ, start_response):
         return self.wsgi_app(environ, start_response)
@@ -43,10 +57,10 @@ class CustomViewTestApp:
 
         return NotFound()
 
-    def _render(self, tmpl_name, tvars):
+    def _render(self, tmpl_name, tvars, headers=None):
         tmpl = self.tmplenv.get_template(tmpl_name)
         content = tmpl.render(tvars)
-        return Response(content, mimetype='text/html')
+        return Response(content, mimetype='text/html', headers=headers)
     
     def twitter_post(self, req, timestamp, target_uri):
         wayback_url = f'{self._config["wayback_base"]}{self._config["playback_template"].format(**locals())}'
@@ -65,8 +79,39 @@ class CustomViewTestApp:
         tvars = {
             'parsed_content': parsed_content,
             # TODO: add more vars available in real wayback env
+            'context': ReplayContext(timestamp.encode('ascii'))
         }
         if error:
             tvars.update(error=error)
+        headers = {
+            'Content-Security-Policy': self.csp_header
+        }
+        return self._render('replay/jsontweet.html', tvars, headers=headers)
 
-        return self._render('replay/jsontweet.html', tvars)
+class ReplayContext:
+    def __init__(self, default_timestamp: bytes):
+        """stripped-down replica of wayback.replay.core.ReplayContext.
+        """
+        self.base_url = 'https://web.archive.org/web'
+        self.default_timestamp = default_timestamp
+
+    def make_replay_url(self, absurl, timestamp=None, flags=None):
+        """make playback URL for the target URL `url` at time `timestamp`,
+        and `flags`. This version can only generate absolute URL (no `style`
+        argument.) for production wayback (web.archive.org)
+        """
+        if timestamp is None:
+            timestamp = self.default_timestamp
+        timestamp = timestamp.decode('latin1')
+        if flags:
+            timestamp += ''.join(f'{fl}_' for fl in flags)
+        return f'{self.base_url}/{timestamp}/{absurl}'
+
+    def make_query_url(self, absurl, prefix=False, variant=None):
+        """make capture/URL search URL for the target URL `url`,
+        of `variant`.
+        """
+        if variant == 'timemap':
+            return f'{self.base_url}/timemap/link/{absurl}'
+        else:
+            return f'{self.base_url}/*/{absurl}{"*" if prefix else ""}'
