@@ -60,7 +60,7 @@
       {% if user.id == data.author_id %}
       <div class="tweet-author">
         <div class="tweet-author-profile-image">
-          <img src="{{ user.profile_image_url }}" alt="{{ user.name }}" />
+          <img src="{{ context.make_replay_url(user.profile_image_url, flags=['im']) }}" alt="{{ user.name }}" />
         </div>
         <div class="tweet-author-info">
           <div class="tweet-author-name">{{ user.name }}</div>
