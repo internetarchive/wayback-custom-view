@@ -109,20 +109,20 @@
 						</video>
 					{% endif %}
 				{% endfor %}
-				<!-- TODO: If there's a quoted tweet, embed it here! -->
+				<!-- If there's a quoted tweet, embed it here! -->
 				{% for tweet in quoted_tweets %}
 					{% with tweet=tweet %}
 						{% include 'replay/jsontweetquoted.html' %}
 					{% endwith %}
 				{% endfor %}
 			</div>
-			<script>
+			<!-- <script>
 				const True = true;
 				const False = false;
 				console.log({{ parsed_content }});
 				console.log("Media: ", {{ media_array }});
 				console.log("Quoted tweets: ", {{ quoted_tweets }});
-				</script>
+				</script> -->
     </div>
     {% endif %}
   </body>

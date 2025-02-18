@@ -5,7 +5,6 @@ from urllib.request import urlopen
 from jinja2 import Environment, PackageLoader
 from werkzeug.wrappers import Request, Response
 from werkzeug.exceptions import NotFound
-import logging
 
 class CustomViewTestApp:
     _config = {
@@ -114,14 +113,13 @@ class CustomViewTestApp:
             tweet_id = referenced_tweet['id']
             for tweet in parsed_content['includes']['tweets']:
                 if tweet['id'] == tweet_id:
-                    # TODO: check if quoted tweet has media, append it.
+                    #  check if quoted tweet has media, append it.
                     quoted_tweet_text = tweet['text']
                     quoted_tweet_entities = tweet['entities']['urls']
                     quoted_tweet_media_array = []
                     for entity in quoted_tweet_entities:
                         start = entity['start']
                         end = entity['end']
-                        logging.error(entity)
                         if (start or start == 0) and end:              
                             substring = quoted_tweet_text[start:end]
                             tweet['text'] = quoted_tweet_text.replace(substring, "")
