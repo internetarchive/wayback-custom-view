@@ -4,10 +4,17 @@
     <meta charset="utf-8" />
     <title>Wayback Machine</title>
     <style type="text/css">
+			body {
+				margin:0;
+				padding: 20px;
+				background-color: #000;
+				min-height: 100vh;
+				box-sizing: border-box;
+			}
       .notice {
         border: 2px solid #c9ae00;
         background-color: #ffff00;
-        padding: 6px;
+        padding: 12px;
       }
 
       .tweet-container {
@@ -17,6 +24,9 @@
         border-radius: 12px;
         max-width: 600px;
         margin-top: 20px;
+				margin-left: auto;
+				margin-right: auto;
+				background-color: white;
       }
 
       .tweet-author {
@@ -45,6 +55,23 @@
       .tweet-content {
         font-size: 1.25rem;
       }
+
+			.tweet-image {
+				width: 100%;
+				height: auto;
+				margin-top: 12px;
+				border-radius: 12px;
+			}
+
+			.embedded-tweet-container {
+				box-sizing: border-box;
+				margin-top: 12px;
+				padding: 12px;
+				border: 1px solid #cfd9de;
+        border-radius: 12px;
+				background-color: white;
+				max-width: 100%;
+			}
     </style>
   </head>
   <body>
@@ -69,7 +96,33 @@
       </div>
       {% endif %}
       {% endfor %}
-      <div class="tweet-content">{{data.text | replace('\n', '<br />') }}</div>
+      <div class="tweet-content">{{data.text | replace('\n', '<br />') }}
+				{% for media in media_array %}
+					{% if media.type == "photo" %}
+						<img class="tweet-image" src="{{ context.make_replay_image_url(media.url, flags=['im']) }}" />
+					{% endif %}
+					{% if media.type == "video" %}
+						<video class="tweet-image tweet-video" controls>
+							{% for variant in media.variants %}
+								<source src="{{ context.make_replay_url(variant.url, flags=['im']) }}" type="{{ variant.content_type }}">
+							{% endfor %}
+						</video>
+					{% endif %}
+				{% endfor %}
+				<!-- TODO: If there's a quoted tweet, embed it here! -->
+				{% for tweet in quoted_tweets %}
+					{% with tweet=tweet %}
+						{% include 'replay/jsontweetquoted.html' %}
+					{% endwith %}
+				{% endfor %}
+			</div>
+			<script>
+				const True = true;
+				const False = false;
+				console.log({{ parsed_content }});
+				console.log("Media: ", {{ media_array }});
+				console.log("Quoted tweets: ", {{ quoted_tweets }});
+				</script>
     </div>
     {% endif %}
   </body>

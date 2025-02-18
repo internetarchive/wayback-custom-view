@@ -5,6 +5,7 @@ from urllib.request import urlopen
 from jinja2 import Environment, PackageLoader
 from werkzeug.wrappers import Request, Response
 from werkzeug.exceptions import NotFound
+import logging
 
 class CustomViewTestApp:
     _config = {
@@ -59,7 +60,7 @@ class CustomViewTestApp:
 
     def _render(self, tmpl_name, tvars, headers=None):
         tmpl = self.tmplenv.get_template(tmpl_name)
-        content = tmpl.render(tvars)
+        content = tmpl.render(tvars)        
         return Response(content, mimetype='text/html', headers=headers)
     
     def twitter_post(self, req, timestamp, target_uri):
@@ -68,8 +69,8 @@ class CustomViewTestApp:
         # path part of the location header, so that test app location is updated.
         r = urlopen(wayback_url, timeout=20)
         assert r.status == 200
+        # Potential problem: in some cases, this is coming back as "text/html; charset=utf-8", which seems to be old tweets
         assert r.getheader('Content-Type') == 'application/json'
-
         error = None
         try:
             parsed_content = json.load(r)
@@ -78,6 +79,7 @@ class CustomViewTestApp:
             error = f'content is not a valid JSON {ex}'
         tvars = {
             'parsed_content': parsed_content,
+            'media_array': [],
             # TODO: add more vars available in real wayback env
             'context': ReplayContext(timestamp.encode('ascii'))
         }
@@ -86,6 +88,57 @@ class CustomViewTestApp:
         headers = {
             'Content-Security-Policy': self.csp_header
         }
+        main_text = parsed_content['data']['text']
+        entities = parsed_content['data']['entities']['urls']
+        try: 
+            referenced_tweets = parsed_content['data']['referenced_tweets']
+        except KeyError:
+            referenced_tweets = []
+        media_array = []
+        quoted_tweets = []
+        for entity in entities:
+            start = entity['start']
+            end = entity['end']
+            if (start or start == 0) and end:              
+                substring = main_text[start:end]
+                parsed_content['data']['text'] = main_text.replace(substring, "")
+                if substring == entity["url"]:
+                    # If we are here, there is a match. Now get the media to insert in the tweet
+                    if 'media_key' in entity:
+                        media_key = entity['media_key']
+                        # If there are multiple media, they will all match the same media_key
+                        for media in parsed_content['includes']['media']:
+                            if media['media_key'] == media_key:
+                                media_array.append(media)
+        for referenced_tweet in referenced_tweets:
+            tweet_id = referenced_tweet['id']
+            for tweet in parsed_content['includes']['tweets']:
+                if tweet['id'] == tweet_id:
+                    # TODO: check if quoted tweet has media, append it.
+                    quoted_tweet_text = tweet['text']
+                    quoted_tweet_entities = tweet['entities']['urls']
+                    quoted_tweet_media_array = []
+                    for entity in quoted_tweet_entities:
+                        start = entity['start']
+                        end = entity['end']
+                        logging.error(entity)
+                        if (start or start == 0) and end:              
+                            substring = quoted_tweet_text[start:end]
+                            tweet['text'] = quoted_tweet_text.replace(substring, "")
+                            if substring == entity["url"]:
+                                # If we are here, there is a match. Now get the media to insert in the tweet
+                                if 'media_key' in entity:
+                                    media_key = entity['media_key']
+                                    # do we need to test this?
+                                    quoted_tweet_media_array.append(entity)
+                    if len(quoted_tweet_media_array) > 0:
+                        tweet['media_array'] = quoted_tweet_media_array
+                    quoted_tweets.append(tweet)
+
+        if len(quoted_tweets) > 0:
+            tvars['quoted_tweets'] = quoted_tweets
+        if len(media_array) > 0:
+            tvars['media_array'] = media_array
         return self._render('replay/jsontweet.html', tvars, headers=headers)
 
 class ReplayContext:
@@ -106,6 +159,22 @@ class ReplayContext:
         if flags:
             timestamp += ''.join(f'{fl}_' for fl in flags)
         return f'{self.base_url}/{timestamp}/{absurl}'
+    
+    def make_replay_image_url(self, absurl, timestamp=None, flags=None):
+        """make playback URL for the target URL `url` at time `timestamp`,
+        and `flags`. This version can only generate absolute URL (no `style`
+        argument.) for production wayback (web.archive.org)
+
+        Also: strip extension off of URL, add "?name=orig&format={extension}
+        """
+        stripped_url = absurl.rsplit('.',1)[0]
+        extension = absurl.rsplit('.',1)[1]
+        if timestamp is None:
+            timestamp = self.default_timestamp
+        timestamp = timestamp.decode('latin1')
+        if flags:
+            timestamp += ''.join(f'{fl}_' for fl in flags)
+        return f'{self.base_url}/{timestamp}/{stripped_url}?name=orig&format={extension}'
 
     def make_query_url(self, absurl, prefix=False, variant=None):
         """make capture/URL search URL for the target URL `url`,
