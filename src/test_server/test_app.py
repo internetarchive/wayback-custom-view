@@ -117,6 +117,7 @@ class CustomViewTestApp:
                     quoted_tweet_text = tweet['text']
                     quoted_tweet_entities = tweet['entities']['urls']
                     quoted_tweet_media_array = []
+
                     for entity in quoted_tweet_entities:
                         start = entity['start']
                         end = entity['end']
@@ -131,12 +132,19 @@ class CustomViewTestApp:
                                     quoted_tweet_media_array.append(entity)
                     if len(quoted_tweet_media_array) > 0:
                         tweet['media_array'] = quoted_tweet_media_array
+                    
+                    # get the URL for the quoted tweet
+                    for user in parsed_content['includes']['users']:
+                        if user['id'] == tweet['author_id']:
+                            tweet['quoted_tweet_url'] =  f'https://twitter.com/{user["username"]}/status/{tweet["conversation_id"]}'
+                            break
                     quoted_tweets.append(tweet)
 
         if len(quoted_tweets) > 0:
             tvars['quoted_tweets'] = quoted_tweets
         if len(media_array) > 0:
             tvars['media_array'] = media_array
+        tvars['wayback_url'] = wayback_url
         return self._render('replay/jsontweet.html', tvars, headers=headers)
 
 class ReplayContext:

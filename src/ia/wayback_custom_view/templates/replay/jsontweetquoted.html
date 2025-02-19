@@ -18,7 +18,7 @@
 					<img class="tweet-image" src="{{ context.make_replay_url(media.expanded_url, flags=['im']) }}" />
 				{% endfor %}
 			</div>
-			<p class="date" id="quoteddate" />
+			<p class="date"><a id="quoteddate" href="{{tweet.quoted_tweet_url}}"></a></p>
 			<script>
 				var dateString = "{{ data.created_at }}";
 				var date = new Date(dateString);
