@@ -72,6 +72,11 @@
 				background-color: white;
 				max-width: 100%;
 			}
+			.date {
+				font-size: 0.75rem;
+				color: #657786;
+				margin-top: 12px;
+			}
     </style>
   </head>
   <body>
@@ -115,14 +120,13 @@
 						{% include 'replay/jsontweetquoted.html' %}
 					{% endwith %}
 				{% endfor %}
+				<p class="date" id="parentdate" />
 			</div>
-			<!-- <script>
-				const True = true;
-				const False = false;
-				console.log({{ parsed_content }});
-				console.log("Media: ", {{ media_array }});
-				console.log("Quoted tweets: ", {{ quoted_tweets }});
-				</script> -->
+			<script>
+				var dateString = "{{ data.created_at }}";
+				var date = new Date(dateString);
+				document.querySelector("#parentdate").innerText = date;
+				</script>
     </div>
     {% endif %}
   </body>

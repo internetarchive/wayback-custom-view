@@ -18,12 +18,10 @@
 					<img class="tweet-image" src="{{ context.make_replay_url(media.expanded_url, flags=['im']) }}" />
 				{% endfor %}
 			</div>
-			<!-- <script>
-				const True = true;
-				const False = false;
-				console.log({{ parsed_content }});
-				console.log({{ media_array }});
-				console.log({{ tweet }});
-				console.log("Quoted tweets: ", {{ quoted_tweets }});
-			</script> -->
+			<p class="date" id="quoteddate" />
+			<script>
+				var dateString = "{{ data.created_at }}";
+				var date = new Date(dateString);
+				document.querySelector("#quoteddate").innerText = date;
+			</script>
     </div>
