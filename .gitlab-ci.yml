@@ -1,3 +1,7 @@
 include:
   project: wb/docker-build
   file: build-package-python.yml
+
+package:
+  rules:
+  - if: $CI_COMMIT_BRANCH == "main"
