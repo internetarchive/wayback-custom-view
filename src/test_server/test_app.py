@@ -59,9 +59,9 @@ class CustomViewTestApp:
 
     def _render(self, tmpl_name, tvars, headers=None):
         tmpl = self.tmplenv.get_template(tmpl_name)
-        content = tmpl.render(tvars)        
+        content = tmpl.render(tvars)
         return Response(content, mimetype='text/html', headers=headers)
-    
+
     def twitter_post(self, req, timestamp, target_uri):
         wayback_url = f'{self._config["wayback_base"]}{self._config["playback_template"].format(**locals())}'
         # TODO: disable auto-handling of redirects, and return redirect to the
@@ -98,7 +98,7 @@ class CustomViewTestApp:
         for entity in entities:
             start = entity['start']
             end = entity['end']
-            if (start or start == 0) and end:              
+            if (start or start == 0) and end:
                 substring = main_text[start:end]
                 parsed_content['data']['text'] = main_text.replace(substring, "")
                 if substring == entity["url"]:
@@ -121,7 +121,7 @@ class CustomViewTestApp:
                     for entity in quoted_tweet_entities:
                         start = entity['start']
                         end = entity['end']
-                        if (start or start == 0) and end:              
+                        if (start or start == 0) and end:
                             substring = quoted_tweet_text[start:end]
                             tweet['text'] = quoted_tweet_text.replace(substring, "")
                             if substring == entity["url"]:
@@ -132,7 +132,6 @@ class CustomViewTestApp:
                                     quoted_tweet_media_array.append(entity)
                     if len(quoted_tweet_media_array) > 0:
                         tweet['media_array'] = quoted_tweet_media_array
-                    
                     # get the URL for the quoted tweet
                     for user in parsed_content['includes']['users']:
                         if user['id'] == tweet['author_id']:
@@ -165,7 +164,7 @@ class ReplayContext:
         if flags:
             timestamp += ''.join(f'{fl}_' for fl in flags)
         return f'{self.base_url}/{timestamp}/{absurl}'
-    
+
     def make_replay_image_url(self, absurl, timestamp=None, flags=None):
         """make playback URL for the target URL `url` at time `timestamp`,
         and `flags`. This version can only generate absolute URL (no `style`
