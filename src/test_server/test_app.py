@@ -82,8 +82,14 @@ class CustomViewTestApp:
         headers = {
             'Content-Security-Policy': self.csp_header
         }
-        main_text = parsed_content['data']['text']
-        entities = parsed_content['data']['entities']['urls']
+        try:
+            main_text = parsed_content['data']['text']
+        except KeyError:
+            main_text = ""
+        try:
+            entities = parsed_content['data']['entities']['urls']
+        except KeyError:
+            entities = []
         try:
             referenced_tweets = parsed_content['data']['referenced_tweets']
         except KeyError:
@@ -148,8 +154,7 @@ class CustomViewTestApp:
         else:
             outdata['media_array'] = ["No media found"]
         tvars = {
-            'parsed_content': parsed_content,
-            'outdata': outdata,
+            'parsed_content': {'data': outdata},
             'media_array': [],
             'quoted_tweets': [],
             # TODO: add more vars available in real wayback env
