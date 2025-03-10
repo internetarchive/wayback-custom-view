@@ -1,6 +1,6 @@
     {% set tweetdata = tweet %}
     <div class="embedded-tweet-container">
-      {% for user in data.includes.users %}
+      {% for user in data.users %}
       {% if user.id == tweetdata.author_id %}
       <div class="tweet-author">
         <div class="tweet-author-profile-image">
