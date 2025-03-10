@@ -52,7 +52,8 @@ class CustomViewTestApp:
             target_uri = m.group('target_uri')
 
             uc = urlsplit(target_uri)
-            if uc.netloc in ('twitter.com', 'x.com') and (m := re.match(r'/[^/]+/status/\d+', uc.path)):
+            if uc.netloc in ('twitter.com',
+                            'x.com') and (m := re.match(r'/[^/]+/status/\d+', uc.path)):
                 return self.twitter_post(req, timestamp, target_uri)
 
         return NotFound()
@@ -63,12 +64,14 @@ class CustomViewTestApp:
         return Response(content, mimetype='text/html', headers=headers)
 
     def twitter_post(self, req, timestamp, target_uri):
-        wayback_url = f'{self._config["wayback_base"]}{self._config["playback_template"].format(**locals())}'
+        wayback_url = f'{self._config["wayback_base"]}{self._config[
+            "playback_template"].format(**locals())}'
         # TODO: disable auto-handling of redirects, and return redirect to the
         # path part of the location header, so that test app location is updated.
         r = urlopen(wayback_url, timeout=20)
         assert r.status == 200
-        # Potential problem: in some cases, this is coming back as "text/html; charset=utf-8", which seems to be old tweets
+        # Potential problem: in some cases, this is coming back as
+        # "text/html; charset=utf-8", which seems to be old tweets
         assert r.getheader('Content-Type') == 'application/json'
         error = None
         try:
@@ -81,7 +84,7 @@ class CustomViewTestApp:
         }
         main_text = parsed_content['data']['text']
         entities = parsed_content['data']['entities']['urls']
-        try: 
+        try:
             referenced_tweets = parsed_content['data']['referenced_tweets']
         except KeyError:
             referenced_tweets = []
@@ -90,6 +93,7 @@ class CustomViewTestApp:
         for entity in entities:
             start = entity['start']
             end = entity['end']
+
             if (start or start == 0) and end:
                 substring = main_text[start:end]
                 parsed_content['data']['text'] = main_text.replace(substring, "")
@@ -117,7 +121,8 @@ class CustomViewTestApp:
                             substring = quoted_tweet_text[start:end]
                             tweet['text'] = quoted_tweet_text.replace(substring, "")
                             if substring == entity["url"]:
-                                # If we are here, there is a match. Now get the media to insert in the tweet
+                                # If we are here, there is a match.
+                                # Now get the media to insert in the tweet
                                 if 'media_key' in entity:
                                     media_key = entity['media_key']
                                     # do we need to test this?
@@ -127,14 +132,20 @@ class CustomViewTestApp:
                     # get the URL for the quoted tweet
                     for user in parsed_content['includes']['users']:
                         if user['id'] == tweet['author_id']:
-                            tweet['quoted_tweet_url'] =  f'https://twitter.com/{user["username"]}/status/{tweet["conversation_id"]}'
+                            tweet['quoted_tweet_url'] =  f'https://twitter.com/{user[
+                                "username"]}/status/{tweet["conversation_id"]}'
                             break
                     quoted_tweets.append(tweet)
 
         if len(quoted_tweets) > 0:
             parsed_content['data']['quoted_tweets'] = quoted_tweets
+        else:
+            parsed_content['data']['quoted_tweets'] = ["No quoted tweets found"]
         if len(media_array) > 0:
             parsed_content['data']['media_array'] = media_array
+        else:
+            parsed_content['data']['media_array'] = ["No media found"]
+        parsed_content['data']['referenced_tweets'] = referenced_tweets
         tvars = {
             'parsed_content': parsed_content,
             'media_array': [],
