@@ -79,6 +79,7 @@ class CustomViewTestApp:
         tvars = {
             'parsed_content': parsed_content,
             'media_array': [],
+            'quoted_tweets': [],
             # TODO: add more vars available in real wayback env
             'context': ReplayContext(timestamp.encode('ascii'))
         }

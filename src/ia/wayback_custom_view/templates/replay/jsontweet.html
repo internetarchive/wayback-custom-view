@@ -129,7 +129,9 @@
 				{% endfor %}
 				<p class="date"><a id="parentdate" href={{parsed_content.wayback_url}}></a></p>
 			</div>
-      <div><p>{{data}}</p]></div>
+      <div><p><strong>Data:</strong> {{data}}</p]></div>
+      <div><p><strong>Media_array:</strong> {{media_array}}</p></div>
+      <div><p><strong>Quoted_tweets</strong>{{quoted_tweets}}</p></div>
       <script>
 				var dateString = "{{ data.created_at }}";
 				var date = new Date(dateString);
