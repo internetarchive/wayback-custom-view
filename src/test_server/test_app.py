@@ -76,15 +76,6 @@ class CustomViewTestApp:
         except ValueError as ex:
             parsed_content = None
             error = f'content is not a valid JSON {ex}'
-        tvars = {
-            'parsed_content': parsed_content,
-            'media_array': [],
-            'quoted_tweets': [],
-            # TODO: add more vars available in real wayback env
-            'context': ReplayContext(timestamp.encode('ascii'))
-        }
-        if error:
-            tvars.update(error=error)
         headers = {
             'Content-Security-Policy': self.csp_header
         }
@@ -141,10 +132,20 @@ class CustomViewTestApp:
                     quoted_tweets.append(tweet)
 
         if len(quoted_tweets) > 0:
-            tvars['parsed_content']['data']['quoted_tweets'] = quoted_tweets
+            parsed_content['data']['quoted_tweets'] = quoted_tweets
         if len(media_array) > 0:
-            tvars['parsed_content']['data']['media_array'] = media_array
-        tvars['wayback_url'] = wayback_url
+            parsed_content['data']['media_array'] = media_array
+        tvars = {
+            'parsed_content': parsed_content,
+            'media_array': [],
+            'quoted_tweets': [],
+            # TODO: add more vars available in real wayback env
+            'context': ReplayContext(timestamp.encode('ascii')),
+            'wayback_url': wayback_url
+        }
+        if error:
+            tvars.update(error=error)
+
         return self._render('replay/jsontweet.html', tvars, headers=headers)
 
 class ReplayContext:
