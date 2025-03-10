@@ -141,9 +141,9 @@ class CustomViewTestApp:
                     quoted_tweets.append(tweet)
 
         if len(quoted_tweets) > 0:
-            tvars['quoted_tweets'] = quoted_tweets
+            tvars['parsed_content']['data']['quoted_tweets'] = quoted_tweets
         if len(media_array) > 0:
-            tvars['media_array'] = media_array
+            tvars['parsed_content']['data']['media_array'] = media_array
         tvars['wayback_url'] = wayback_url
         return self._render('replay/jsontweet.html', tvars, headers=headers)
 
