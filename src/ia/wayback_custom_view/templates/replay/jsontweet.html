@@ -129,11 +129,12 @@
 				{% endfor %}
 				<p class="date"><a id="parentdate" href={{parsed_content.wayback_url}}></a></p>
 			</div>
-			<script>
+      <div><p>{{data}}</p]></div>
+      <script>
 				var dateString = "{{ data.created_at }}";
 				var date = new Date(dateString);
 				document.querySelector("#parentdate").innerText = date;
-				</script>
+      </script>
     </div>
     {% endif %}
   </body>
