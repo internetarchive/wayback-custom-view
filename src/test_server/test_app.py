@@ -96,6 +96,7 @@ class CustomViewTestApp:
 
             if (start or start == 0) and end:
                 substring = main_text[start:end]
+                # this doesn't seem to be firing
                 parsed_content['data']['text'] = main_text.replace(substring, "")
                 if substring == entity["url"]:
                     # If we are here, there is a match. Now get the media to insert in the tweet
@@ -105,6 +106,7 @@ class CustomViewTestApp:
                         for media in parsed_content['includes']['media']:
                             if media['media_key'] == media_key:
                                 media_array.append(media)
+
         for referenced_tweet in referenced_tweets:
             tweet_id = referenced_tweet['id']
             for tweet in parsed_content['includes']['tweets']:
@@ -136,18 +138,18 @@ class CustomViewTestApp:
                                 "username"]}/status/{tweet["conversation_id"]}'
                             break
                     quoted_tweets.append(tweet)
-
+        outdata = parsed_content['data']
         if len(quoted_tweets) > 0:
-            parsed_content['data']['quoted_tweets'] = quoted_tweets
+            outdata['quoted_tweets'] = quoted_tweets
         else:
-            parsed_content['data']['quoted_tweets'] = ["No quoted tweets found"]
+            outdata['quoted_tweets'] = ["No quoted tweets found"]
         if len(media_array) > 0:
-            parsed_content['data']['media_array'] = media_array
+            outdata['media_array'] = media_array
         else:
-            parsed_content['data']['media_array'] = ["No media found"]
-        parsed_content['data']['referenced_tweets'] = referenced_tweets
+            outdata['media_array'] = ["No media found"]
         tvars = {
             'parsed_content': parsed_content,
+            'outdata': outdata,
             'media_array': [],
             'quoted_tweets': [],
             # TODO: add more vars available in real wayback env
