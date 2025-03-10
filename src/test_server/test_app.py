@@ -144,7 +144,11 @@ class CustomViewTestApp:
                                 "username"]}/status/{tweet["conversation_id"]}'
                             break
                     quoted_tweets.append(tweet)
-        outdata = parsed_content['data']
+        outdata = {}
+        outdata['includes'] = parsed_content['includes']
+        outdata['author_id'] = parsed_content['data']['author_id']
+        outdata['text'] = main_text
+        outdata['wayback_url'] =wayback_url
         if len(quoted_tweets) > 0:
             outdata['quoted_tweets'] = quoted_tweets
         else:
@@ -154,9 +158,7 @@ class CustomViewTestApp:
         else:
             outdata['media_array'] = ["No media found"]
         tvars = {
-            'parsed_content': {'data': outdata},
-            'media_array': [],
-            'quoted_tweets': [],
+            'outdata':  outdata,
             # TODO: add more vars available in real wayback env
             'context': ReplayContext(timestamp.encode('ascii')),
             'wayback_url': wayback_url
