@@ -155,12 +155,8 @@ class CustomViewTestApp:
         }
         if len(quoted_tweets) > 0:
             outdata['quoted_tweets'] = quoted_tweets
-        else:
-            outdata['quoted_tweets'] = ["No quoted tweets found"]
         if len(media_array) > 0:
             outdata['media_array'] = media_array
-        else:
-            outdata['media_array'] = ["No media found"]
         tvars = {
             'tweet_data':  outdata,
             # TODO: add more vars available in real wayback env
