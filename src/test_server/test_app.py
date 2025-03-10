@@ -1,10 +1,14 @@
 import re
 import json
+import logging
+import sys
 from urllib.parse import urlsplit
 from urllib.request import urlopen
 from jinja2 import Environment, PackageLoader
 from werkzeug.wrappers import Request, Response
 from werkzeug.exceptions import NotFound
+
+logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
 
 class CustomViewTestApp:
     _config = {
@@ -161,14 +165,15 @@ class CustomViewTestApp:
         if len(media_array) > 0:
             outdata.update(media_array=media_array)
         tvars = {
-            'tweet_data':  outdata,
+            'text': main_text,
+            'parsed_content':  outdata,
             # TODO: add more vars available in real wayback env
             'context': ReplayContext(timestamp.encode('ascii')),
             'wayback_url': wayback_url
         }
         if error:
             tvars.update(error=error)
-
+        logging.info("tvars:  %s", tvars)
         return self._render('replay/jsontweet.html', tvars, headers=headers)
 
 class ReplayContext:
