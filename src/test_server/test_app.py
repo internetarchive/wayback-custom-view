@@ -86,14 +86,17 @@ class CustomViewTestApp:
             main_text = parsed_content['data']['text']
         except KeyError:
             main_text = ""
+            error = 'No text in tweet'
         try:
             entities = parsed_content['data']['entities']['urls']
         except KeyError:
             entities = []
+            # error = "No entities in tweet"
         try:
             referenced_tweets = parsed_content['data']['referenced_tweets']
         except KeyError:
             referenced_tweets = []
+            # error = "No referenced tweets in tweet"
         media_array = []
         quoted_tweets = []
         for entity in entities:
@@ -103,7 +106,7 @@ class CustomViewTestApp:
             if (start or start == 0) and end:
                 substring = main_text[start:end]
                 # this doesn't seem to be firing
-                parsed_content['data']['text'] = main_text.replace(substring, "")
+                main_text = main_text.replace(substring, "")
                 if substring == entity["url"]:
                     # If we are here, there is a match. Now get the media to insert in the tweet
                     if 'media_key' in entity:
@@ -154,9 +157,9 @@ class CustomViewTestApp:
             'wayback_url': wayback_url
         }
         if len(quoted_tweets) > 0:
-            outdata['quoted_tweets'] = quoted_tweets
+            outdata.update(quoted_tweets=quoted_tweets)
         if len(media_array) > 0:
-            outdata['media_array'] = media_array
+            outdata.update(media_array=media_array)
         tvars = {
             'tweet_data':  outdata,
             # TODO: add more vars available in real wayback env
