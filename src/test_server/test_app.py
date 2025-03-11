@@ -167,18 +167,9 @@ class CustomViewTestApp:
         # if len(media_array) > 0:
         #     outdata.update(media_array=media_array)
         tvars = {
-            'text': main_text,
-            'data':  parsed_content['data'],
-            'includes':  parsed_content['includes'],
-            'everything': parsed_content,
-            # 'outdata': outdata,
+            'parsed_content':  parsed_content,
             # TODO: add more vars available in real wayback env
             'wayback_url': wayback_url,
-            'users': parsed_content['includes']['users'],
-            'author_id': parsed_content['data']['author_id'],
-            'created_at': parsed_content['data']['created_at'],
-            'media_array': [],
-            'quoted_tweets': [],
             'context': ReplayContext(timestamp.encode('ascii')),
         }
         if error:
@@ -187,7 +178,7 @@ class CustomViewTestApp:
             tvars.update(quoted_tweets=quoted_tweets)
         if len(media_array) > 0:
             tvars.update(media_array=media_array)
-        logging.info("tvars:  %s", tvars)
+        # logging.info("tvars:  %s", tvars)
         return self._render('replay/jsontweet.html', tvars, headers=headers)
 
 class ReplayContext:
@@ -233,3 +224,9 @@ class ReplayContext:
             return f'{self.base_url}/timemap/link/{absurl}'
         else:
             return f'{self.base_url}/*/{absurl}{"*" if prefix else ""}'
+
+    def cleantext(self, data):
+        """docstring"""
+        logging.info("data: %s", data)
+        main_text = data['data']['text']
+        return main_text
