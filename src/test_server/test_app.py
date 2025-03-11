@@ -104,71 +104,72 @@ class CustomViewTestApp:
             # error = "No referenced tweets in tweet"
         media_array = []
         quoted_tweets = []
-        for entity in entities:
-            start = entity['start']
-            end = entity['end']
+        # for entity in entities:
+        #     start = entity['start']
+        #     end = entity['end']
 
-            if (start or start == 0) and end:
-                substring = main_text[start:end]
-                # this doesn't seem to be firing
-                main_text = main_text.replace(substring, "")
-                if substring == entity["url"]:
-                    # If we are here, there is a match. Now get the media to insert in the tweet
-                    if 'media_key' in entity:
-                        media_key = entity['media_key']
-                        # If there are multiple media, they will all match the same media_key
-                        for media in parsed_content['includes']['media']:
-                            if media['media_key'] == media_key:
-                                media_array.append(media)
+        #     if (start or start == 0) and end:
+        #         substring = main_text[start:end]
+        #         # this doesn't seem to be firing
+        #         main_text = main_text.replace(substring, "")
+        #         if substring == entity["url"]:
+        #             # If we are here, there is a match. Now get the media to insert in the tweet
+        #             if 'media_key' in entity:
+        #                 media_key = entity['media_key']
+        #                 # If there are multiple media, they will all match the same media_key
+        #                 for media in parsed_content['includes']['media']:
+        #                     if media['media_key'] == media_key:
+        #                         media_array.append(media)
 
-        # we need to do this before it gets passed
-        for referenced_tweet in referenced_tweets:
-            tweet_id = referenced_tweet['id']
-            for tweet in parsed_content['includes']['tweets']:
-                if tweet['id'] == tweet_id:
-                    #  check if quoted tweet has media, append it.
-                    quoted_tweet_text = tweet['text']
-                    quoted_tweet_entities = tweet['entities']['urls']
-                    quoted_tweet_media_array = []
+        # # we need to do this before it gets passed
+        # for referenced_tweet in referenced_tweets:
+        #     tweet_id = referenced_tweet['id']
+        #     for tweet in parsed_content['includes']['tweets']:
+        #         if tweet['id'] == tweet_id:
+        #             #  check if quoted tweet has media, append it.
+        #             quoted_tweet_text = tweet['text']
+        #             quoted_tweet_entities = tweet['entities']['urls']
+        #             quoted_tweet_media_array = []
 
-                    for entity in quoted_tweet_entities:
-                        start = entity['start']
-                        end = entity['end']
-                        if (start or start == 0) and end:
-                            substring = quoted_tweet_text[start:end]
-                            tweet['text'] = quoted_tweet_text.replace(substring, "")
-                            if substring == entity["url"]:
-                                # If we are here, there is a match.
-                                # Now get the media to insert in the tweet
-                                if 'media_key' in entity:
-                                    media_key = entity['media_key']
-                                    # do we need to test this?
-                                    quoted_tweet_media_array.append(entity)
-                    if len(quoted_tweet_media_array) > 0:
-                        tweet['media_array'] = quoted_tweet_media_array
-                    # get the URL for the quoted tweet
-                    for user in parsed_content['includes']['users']:
-                        if user['id'] == tweet['author_id']:
-                            tweet['quoted_tweet_url'] =  f'https://twitter.com/{user[
-                                "username"]}/status/{tweet["conversation_id"]}'
-                            break
-                    quoted_tweets.append(tweet)
-        outdata = {
-            'text': main_text,
-            'users': parsed_content['includes']['users'],
-            'author_id': parsed_content['data']['author_id'],
-            'media_array': [],
-            'quoted_tweets': [],
-            'created_at': parsed_content['data']['created_at'],
-            'wayback_url': wayback_url
-        }
-        if len(quoted_tweets) > 0:
-            outdata.update(quoted_tweets=quoted_tweets)
-        if len(media_array) > 0:
-            outdata.update(media_array=media_array)
+        #             for entity in quoted_tweet_entities:
+        #                 start = entity['start']
+        #                 end = entity['end']
+        #                 if (start or start == 0) and end:
+        #                     substring = quoted_tweet_text[start:end]
+        #                     tweet['text'] = quoted_tweet_text.replace(substring, "")
+        #                     if substring == entity["url"]:
+        #                         # If we are here, there is a match.
+        #                         # Now get the media to insert in the tweet
+        #                         if 'media_key' in entity:
+        #                             media_key = entity['media_key']
+        #                             # do we need to test this?
+        #                             quoted_tweet_media_array.append(entity)
+        #             if len(quoted_tweet_media_array) > 0:
+        #                 tweet['media_array'] = quoted_tweet_media_array
+        #             # get the URL for the quoted tweet
+        #             for user in parsed_content['includes']['users']:
+        #                 if user['id'] == tweet['author_id']:
+        #                     tweet['quoted_tweet_url'] =  f'https://twitter.com/{user[
+        #                         "username"]}/status/{tweet["conversation_id"]}'
+        #                     break
+        #             quoted_tweets.append(tweet)
+        # outdata = {
+        #     'text': main_text,
+        #     'users': parsed_content['includes']['users'],
+        #     'author_id': parsed_content['data']['author_id'],
+        #     'media_array': [],
+        #     'quoted_tweets': [],
+        #     'created_at': parsed_content['data']['created_at'],
+        #     'wayback_url': wayback_url
+        # }
+        # if len(quoted_tweets) > 0:
+        #     outdata.update(quoted_tweets=quoted_tweets)
+        # if len(media_array) > 0:
+        #     outdata.update(media_array=media_array)
         tvars = {
             'text': main_text,
             'parsed_content':  parsed_content,
+            # 'outdata': outdata,
             # TODO: add more vars available in real wayback env
             'wayback_url': wayback_url,
             'users': parsed_content['includes']['users'],
