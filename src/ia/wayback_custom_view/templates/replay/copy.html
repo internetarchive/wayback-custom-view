@@ -101,6 +101,42 @@
     </div>
     <!-- {% set ddata = data %} -->
     <div class="tweet-container">
+      {% for user in data.includes.users %}
+      {% if user.id == data.data.author_id %}
+      <div class="tweet-author">
+        <div class="tweet-author-profile-image">
+          <img src="{{ context.make_replay_url(user.profile_image_url, flags=['im']) }}" alt="{{ user.name }}" />
+        </div>
+        <div class="tweet-author-info">
+          <div class="tweet-author-name">{{ user.name }}</div>
+          <div class="tweet-author-username">@{{ user.username }}</div>
+        </div>
+      </div>
+      {% endif %}
+      {% endfor %}
+      <div class="tweet-content">{{context.cleantext(data) | replace('\n', '<br />') }}
+        <!-- THIS IS FAILING REMOTELY -->
+				{% for media in data.media_array %}
+					{% if media.type == "photo" %}
+						<img class="tweet-image" src="{{ context.make_replay_image_url(media.url, flags=['im']) }}" />
+					{% endif %}
+					{% if media.type == "video" %}
+						<video class="tweet-image tweet-video" controls>
+							{% for variant in media.variants %}
+								<source src="{{ context.make_replay_url(variant.url, flags=['im']) }}" type="{{ variant.content_type }}">
+							{% endfor %}
+						</video>
+					{% endif %}
+				{% endfor %}
+				<!-- If there's a quoted tweet, embed it here! -->
+        <!-- THIS IS FAILING REMOTELY -->
+				{% for tweet in data.quoted_tweets %}
+					{% with tweet=tweet %}
+						{% include 'replay/jsontweetquoted.html' %}
+					{% endwith %}
+				{% endfor %}
+				<p class="date"><a id="parentdate" href={{data.wayback_url}}></a></p>
+			</div>
       <script>
         console.log({{ data | tojson | safe }});
 				var dateString = "{{ data.data.created_at }}";

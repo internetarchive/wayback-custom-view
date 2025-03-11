@@ -227,6 +227,9 @@ class ReplayContext:
 
     def cleantext(self, data):
         """docstring"""
-        logging.info("data: %s", data)
-        main_text = data['data']['text']
+        # logging.info("data: %s", data)
+        try:
+            main_text = data['data']['text']
+        except KeyError:
+            main_text = ""
         return main_text
