@@ -64,7 +64,7 @@ class CustomViewTestApp:
 
     def _render(self, tmpl_name, tvars, headers=None):
         tmpl = self.tmplenv.get_template(tmpl_name)
-        content = tmpl.render(data=tvars)
+        content = tmpl.render(tvars)
         return Response(content, mimetype='text/html', headers=headers)
 
     def twitter_post(self, req, timestamp, target_uri):
@@ -80,6 +80,7 @@ class CustomViewTestApp:
         error = None
         try:
             parsed_content = json.load(r)
+            error = 'Trying to pass an error'
         except ValueError as ex:
             parsed_content = None
             error = f'content is not a valid JSON {ex}'
