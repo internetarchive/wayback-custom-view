@@ -92,16 +92,16 @@ class CustomViewTestApp:
         except KeyError:
             main_text = ""
             error = 'No text in tweet'
-        try:
-            urls = parsed_content['data']['entities']['urls']
-        except KeyError:
-            urls = []
-            # error = "No URLs in tweet"
-        try:
-            referenced_tweets = parsed_content['data']['referenced_tweets']
-        except KeyError:
-            referenced_tweets = []
-            # error = "No referenced tweets in tweet"
+        # try:
+        #     urls = parsed_content['data']['entities']['urls']
+        # except KeyError:
+        #     urls = []
+        #     # error = "No URLs in tweet"
+        # try:
+        #     referenced_tweets = parsed_content['data']['referenced_tweets']
+        # except KeyError:
+        #     referenced_tweets = []
+        #     # error = "No referenced tweets in tweet"
         media_array = []
         quoted_tweets = []
         # for url in urls:
