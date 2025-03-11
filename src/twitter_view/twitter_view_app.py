@@ -10,7 +10,7 @@ from werkzeug.exceptions import NotFound
 
 logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
 
-class CustomViewTestApp:
+class CustomViewTwitterApp:
     _config = {
         'wayback_base': 'https://web.archive.org',
         'playback_template': '/web/{timestamp}id_/{target_uri}',

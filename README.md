@@ -15,7 +15,7 @@ $ pip install -e .[dev]
 
 Launch test server
 ```
-$ python -m test_server
+$ python -m twitter_view
  * Running on http://localhost:5000/ (Press CTRL+C to quit)
  * Restarting with stat
  * Debugger is active!

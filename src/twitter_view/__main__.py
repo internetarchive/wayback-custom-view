@@ -3,7 +3,7 @@ from argparse import ArgumentParser
 from werkzeug.serving import run_simple
 from werkzeug.middleware.shared_data import SharedDataMiddleware
 
-from .test_app import CustomViewTestApp
+from .twitter_view_app import CustomViewTwitterApp
 
 def bind_addr(v):
     host, _, port = v.partition(':')
@@ -14,7 +14,7 @@ parser.add_argument('-b', '--bind', type=bind_addr, default=bind_addr(''))
 
 args = parser.parse_args()
 
-base_app = CustomViewTestApp()
+base_app = CustomViewTwitterApp()
 application = SharedDataMiddleware(base_app, {
     '/_static': os.path.join(os.path.dirname(__file__), 'static')
 })
