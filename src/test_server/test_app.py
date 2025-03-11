@@ -120,6 +120,7 @@ class CustomViewTestApp:
                             if media['media_key'] == media_key:
                                 media_array.append(media)
 
+        # we need to do this before it gets passed
         for referenced_tweet in referenced_tweets:
             tweet_id = referenced_tweet['id']
             for tweet in parsed_content['includes']['tweets']:
@@ -166,7 +167,7 @@ class CustomViewTestApp:
             outdata.update(media_array=media_array)
         tvars = {
             'text': main_text,
-            'parsed_content':  outdata,
+            'parsed_content':  parsed_content,
             # TODO: add more vars available in real wayback env
             'wayback_url': wayback_url,
             'users': parsed_content['includes']['users'],
