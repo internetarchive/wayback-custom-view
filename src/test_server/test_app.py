@@ -168,7 +168,9 @@ class CustomViewTestApp:
         #     outdata.update(media_array=media_array)
         tvars = {
             'text': main_text,
-            'parsed_content':  parsed_content['data'],
+            'data':  parsed_content['data'],
+            'includes':  parsed_content['includes'],
+            'everything': parsed_content,
             # 'outdata': outdata,
             # TODO: add more vars available in real wayback env
             'wayback_url': wayback_url,
