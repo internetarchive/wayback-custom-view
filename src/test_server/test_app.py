@@ -64,7 +64,7 @@ class CustomViewTestApp:
 
     def _render(self, tmpl_name, tvars, headers=None):
         tmpl = self.tmplenv.get_template(tmpl_name)
-        content = tmpl.render(tvars)
+        content = tmpl.render(data=tvars)
         return Response(content, mimetype='text/html', headers=headers)
 
     def twitter_post(self, req, timestamp, target_uri):
