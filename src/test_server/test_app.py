@@ -80,18 +80,17 @@ class CustomViewTestApp:
         error = None
         try:
             parsed_content = json.load(r)
-            error = 'Trying to pass an error'
         except ValueError as ex:
             parsed_content = None
             error = f'content is not a valid JSON {ex}'
         headers = {
             'Content-Security-Policy': self.csp_header
         }
-        try:
-            main_text = parsed_content['data']['text']
-        except KeyError:
-            main_text = ""
-            error = 'No text in tweet'
+        # try:
+        #     main_text = parsed_content['data']['text']
+        # except KeyError:
+        #     main_text = ""
+        #     error = 'No text in tweet'
         # try:
         #     urls = parsed_content['data']['entities']['urls']
         # except KeyError:
@@ -174,10 +173,10 @@ class CustomViewTestApp:
         }
         if error:
             tvars.update(error=error)
-        if len(quoted_tweets) > 0:
-            tvars.update(quoted_tweets=quoted_tweets)
-        if len(media_array) > 0:
-            tvars.update(media_array=media_array)
+        # if len(quoted_tweets) > 0:
+        #     tvars.update(quoted_tweets=quoted_tweets)
+        # if len(media_array) > 0:
+        #     tvars.update(media_array=media_array)
         # logging.info("tvars:  %s", tvars)
         return self._render('replay/jsontweet.html', tvars, headers=headers)
 
