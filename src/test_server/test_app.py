@@ -168,11 +168,20 @@ class CustomViewTestApp:
             'text': main_text,
             'parsed_content':  outdata,
             # TODO: add more vars available in real wayback env
+            'wayback_url': wayback_url,
+            'users': parsed_content['includes']['users'],
+            'author_id': parsed_content['data']['author_id'],
+            'created_at': parsed_content['data']['created_at'],
+            'media_array': [],
+            'quoted_tweets': [],
             'context': ReplayContext(timestamp.encode('ascii')),
-            'wayback_url': wayback_url
         }
         if error:
             tvars.update(error=error)
+        if len(quoted_tweets) > 0:
+            tvars.update(quoted_tweets=quoted_tweets)
+        if len(media_array) > 0:
+            tvars.update(media_array=media_array)
         logging.info("tvars:  %s", tvars)
         return self._render('replay/jsontweet.html', tvars, headers=headers)
 
