@@ -101,8 +101,6 @@
     </div>
     <!-- {% set ddata = data %} -->
     <div class="tweet-container">
-      <div class="tweet-content">{{context.cleantext(data) | replace('\n', '<br />') }}
-      </div>
       <p class="date"><a id="parentdate" href={{data.wayback_url}}></a></p>
       <script>
         console.log({{ data | tojson | safe }});

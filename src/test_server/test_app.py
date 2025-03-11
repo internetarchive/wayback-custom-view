@@ -225,10 +225,22 @@ class ReplayContext:
             return f'{self.base_url}/*/{absurl}{"*" if prefix else ""}'
 
     def cleantext(self, data):
-        """docstring"""
+        """should return just the main text stripped of URLs"""
         # logging.info("data: %s", data)
         try:
             main_text = data['data']['text']
         except KeyError:
             main_text = ""
+        try:
+            urls = data['data']['entities']['urls']
+        except KeyError:
+            urls = []
+        for url in urls:
+            start = url['start']
+            end = url['end']
+
+            if (start or start == 0) and end:
+                substring = main_text[start:end]
+                main_text = main_text.replace(substring, "")
+
         return main_text
