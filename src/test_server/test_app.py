@@ -93,10 +93,10 @@ class CustomViewTestApp:
             main_text = ""
             error = 'No text in tweet'
         try:
-            entities = parsed_content['data']['entities']['urls']
+            urls = parsed_content['data']['entities']['urls']
         except KeyError:
-            entities = []
-            # error = "No entities in tweet"
+            urls = []
+            # error = "No URLs in tweet"
         try:
             referenced_tweets = parsed_content['data']['referenced_tweets']
         except KeyError:
@@ -104,18 +104,18 @@ class CustomViewTestApp:
             # error = "No referenced tweets in tweet"
         media_array = []
         quoted_tweets = []
-        # for entity in entities:
-        #     start = entity['start']
-        #     end = entity['end']
+        # for url in urls:
+        #     start = url['start']
+        #     end = url['end']
 
         #     if (start or start == 0) and end:
         #         substring = main_text[start:end]
         #         # this doesn't seem to be firing
         #         main_text = main_text.replace(substring, "")
-        #         if substring == entity["url"]:
+        #         if substring == url["url"]:
         #             # If we are here, there is a match. Now get the media to insert in the tweet
-        #             if 'media_key' in entity:
-        #                 media_key = entity['media_key']
+        #             if 'media_key' in url:
+        #                 media_key = url['media_key']
         #                 # If there are multiple media, they will all match the same media_key
         #                 for media in parsed_content['includes']['media']:
         #                     if media['media_key'] == media_key:
@@ -128,22 +128,22 @@ class CustomViewTestApp:
         #         if tweet['id'] == tweet_id:
         #             #  check if quoted tweet has media, append it.
         #             quoted_tweet_text = tweet['text']
-        #             quoted_tweet_entities = tweet['entities']['urls']
+        #             quoted_tweet_urls = tweet['entities']['urls']
         #             quoted_tweet_media_array = []
 
-        #             for entity in quoted_tweet_entities:
-        #                 start = entity['start']
-        #                 end = entity['end']
+        #             for url in quoted_tweet_urls:
+        #                 start = url['start']
+        #                 end = url['end']
         #                 if (start or start == 0) and end:
         #                     substring = quoted_tweet_text[start:end]
         #                     tweet['text'] = quoted_tweet_text.replace(substring, "")
-        #                     if substring == entity["url"]:
+        #                     if substring == url["url"]:
         #                         # If we are here, there is a match.
         #                         # Now get the media to insert in the tweet
-        #                         if 'media_key' in entity:
-        #                             media_key = entity['media_key']
+        #                         if 'media_key' in url:
+        #                             media_key = url['media_key']
         #                             # do we need to test this?
-        #                             quoted_tweet_media_array.append(entity)
+        #                             quoted_tweet_media_array.append(url)
         #             if len(quoted_tweet_media_array) > 0:
         #                 tweet['media_array'] = quoted_tweet_media_array
         #             # get the URL for the quoted tweet
@@ -168,7 +168,7 @@ class CustomViewTestApp:
         #     outdata.update(media_array=media_array)
         tvars = {
             'text': main_text,
-            'parsed_content':  parsed_content,
+            'parsed_content':  parsed_content['data'],
             # 'outdata': outdata,
             # TODO: add more vars available in real wayback env
             'wayback_url': wayback_url,
