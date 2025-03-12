@@ -1,10 +1,12 @@
     {% set tweetdata = tweet %}
+    {% set tweetid = tweetdata.id %}
+    {% set baseurl = "https://twitter.com/" + data.includes.users[1].username + "/status/" + tweetid %}
     <div class="embedded-tweet-container">
       {% for user in users %}
       {% if user.id == tweetdata.author_id %}
       <div class="tweet-author">
         <div class="tweet-author-profile-image">
-          <img src="{{ user.profile_image_url }}" alt="{{ user.name }}" />
+          <img src="{{ context.make_replay_url(user.profile_url, flags=['im']) }}" alt="{{ user.name }}" />
         </div>
         <div class="tweet-author-info">
           <div class="tweet-author-name">{{ user.name }}</div>
@@ -18,14 +20,16 @@
 					<img class="tweet-image" src="{{ media.expanded_url }}" />
 				{% endfor %}
 			</div>
-			<p class="date"><a id="quoteddate" href="{{tweet.quoted_tweet_url}}"></a></p>
+			<p class="date"><a id="qt{{ tweetid }}" href="{{context.make_replay_url(baseurl, flags=['im'])}}"></a></p>
 			<script>
 				var dateString = "{{ tweetdata.created_at }}";
 				var date = new Date(dateString);
-				document.querySelector("#quoteddate").innerText = date;
+				document.getElementById("qt{{tweetid}}").innerText = date;
+        let True = true;
+        let False = false;
         console.log("Quoted tweet! Data: ");
-        console.log({{tweetdata}});
+        console.log({{ tweetdata   }});
         console.log("Quoted tweet media array: ");
-        console.log({{tweetdata.media_array}});
+        console.log({{ media_array }})
       </script>
     </div>
