@@ -105,14 +105,31 @@
         {% set thisauthorid = "" %}
       {% endif %}
 
+      {% if data.includes and data.includes.media %}
+        {% set media_array = data.includes.media %}
+      {% else %}
+        {% set media_array = [] %}
+      {% endif %}
+
+      {% if data.includes and data.includes.tweets %}
+        {% set quoted_tweets = data.includes.tweets %}
+      {% else %}
+        {% set quoted_tweets = [] %}
+      {% endif %}
+
       {% if data.data and data.data.entities and data.data.entities.urls %}
         {% set urls = data.data.entities.urls %}
       {% else %}
         {% set urls = [] %}
       {% endif %}
 
-      {% if data.data and data.data.text %}
+      {% if data.data and data.data.text and urls %}
         {% set outtext = data.data.text %}
+        {% set newtext = namespace(text=outtext) %}
+        {% for url in urls %}
+          {% set newtext.text = newtext.text.replace(url.url,"") %}
+        {% endfor %}
+        {% set outtext = newtext.text %}
       {% else %}
         {% set outtext = "" %}
       {% endif %}
