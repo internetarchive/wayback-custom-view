@@ -87,11 +87,9 @@
     </style>
   </head>
   <body>
-    <section style="background-color:magenta;"">
-      {% if error %}
-      <div>error = {{ error }}</div>
-      {% endif %}
-    </section>
+    {% if error %}
+    <div>error = {{ error }}</div>
+    {% endif %}
     {% if parsed_content %}
       {% set data = parsed_content %}
       
@@ -107,31 +105,14 @@
         {% set thisauthorid = "" %}
       {% endif %}
 
-      {% if data.includes and data.includes.media %}
-        {% set media_array = data.includes.media %}
-      {% else %}
-        {% set media_array = [] %}
-      {% endif %}
-
-      {% if data.includes and data.includes.tweets %}
-        {% set quoted_tweets = data.includes.tweets %}
-      {% else %}
-        {% set quoted_tweets = [] %}
-      {% endif %}
-
       {% if data.data and data.data.entities and data.data.entities.urls %}
         {% set urls = data.data.entities.urls %}
       {% else %}
         {% set urls = [] %}
       {% endif %}
 
-      {% if data.data and data.data.text and urls %}
+      {% if data.data and data.data.text %}
         {% set outtext = data.data.text %}
-        {% set newtext = namespace(text=outtext) %}
-        {% for url in urls %}
-          {% set newtext.text = newtext.text.replace(url.url,"") %}
-        {% endfor %}
-        {% set outtext = newtext.text %}
       {% else %}
         {% set outtext = "" %}
       {% endif %}
@@ -154,27 +135,6 @@
       {% endif %}
       {% endfor %}
       <div class="tweet-content">{{outtext | replace('\n', '<br />') }}
-				{% for media in media_array %}
-					{% if media.type == "photo" %}
-						<img class="tweet-image" src="{{ context.make_replay_image_url(media.url, flags=['im']) }}" />
-					{% endif %}
-					{% if media.type == "video" %}
-						<video class="tweet-image tweet-video" controls>
-							{% for variant in media.variants %}
-								<source src="{{ context.make_replay_url(variant.url, flags=['im']) }}" type="{{ variant.content_type }}">
-							{% endfor %}
-						</video>
-					{% endif %}
-				{% endfor %}
-				<!-- If there's a quoted tweet, embed it here! -->
-        <!-- THIS IS FAILING REMOTELY -->
-				{% for tweet in quoted_tweets %}
-            {% if tweet.id != data.data.id %}
-              {% with tweet=tweet %}
-                {% include 'replay/jsontweetquoted.html' %}
-              {% endwith %}
-            {% endif %}
-				{% endfor %}
 				<p class="date"><a id="parentdate" href="/" ></a></p>
 			</div>
       <script>
