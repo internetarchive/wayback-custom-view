@@ -142,7 +142,7 @@
       {% if user.id == thisauthorid %}
       <div class="tweet-author">
         <div class="tweet-author-profile-image">
-          <img src="{{ context.make_replay_url(user.profile_image_url, flags=['im']) }}" alt="{{ user.name }}" />
+          <img src="{{ user.profile_image_url }}" alt="{{ user.name }}" />
         </div>
         <div class="tweet-author-info">
           <div class="tweet-author-name">{{ user.name }}</div>
@@ -154,12 +154,12 @@
       <div class="tweet-content">{{outtext | replace('\n', '<br />') }}
 				{% for media in media_array %}
           {% if media.type == "photo" %}
-            <img class="tweet-image" src="{{context.make_replay_url(media.url, flags=['im']) }}" />
+            <img class="tweet-image" src="{{media.url }}" />
           {% endif %}
 					{% if media.type == "video" %}
 						<video class="tweet-image tweet-video" controls>
 							{% for variant in media.variants %}
-								<source src="{{ context.make_replay_url(variant.url, flags=['im']) }}" type="{{ variant.content_type }}">
+								<source src="{{ variant.url }}" type="{{ variant.content_type }}">
 							{% endfor %}
 						</video>
 					{% endif %}

@@ -6,7 +6,7 @@
       {% if user.id == tweetdata.author_id %}
       <div class="tweet-author">
         <div class="tweet-author-profile-image">
-          <img src="{{ context.make_replay_url(user.profile_url, flags=['im']) }}" alt="{{ user.name }}" />
+          <img src="{{ user.profile_url }}" alt="{{ user.name }}" />
         </div>
         <div class="tweet-author-info">
           <div class="tweet-author-name">{{ user.name }}</div>
@@ -20,16 +20,16 @@
 					<img class="tweet-image" src="{{ media.expanded_url }}" />
 				{% endfor %}
 			</div>
-			<p class="date"><a id="qt{{ tweetid }}" href="{{context.make_replay_url(baseurl, flags=['im'])}}"></a></p>
+			<p class="date"><a id="qt{{ tweetid }}" href="{{baseurl}}"></a></p>
 			<script>
 				var dateString = "{{ tweetdata.created_at }}";
 				var date = new Date(dateString);
 				document.getElementById("qt{{tweetid}}").innerText = date;
-        let True = true;
-        let False = false;
-        console.log("Quoted tweet! Data: ");
-        console.log({{ tweetdata   }});
-        console.log("Quoted tweet media array: ");
-        console.log({{ media_array }})
+        // let True = true;
+        // let False = false;
+        // console.log("Quoted tweet! Data: ");
+        // console.log({{ tweetdata   }});
+        // console.log("Quoted tweet media array: ");
+        // console.log({{ media_array }})
       </script>
     </div>
