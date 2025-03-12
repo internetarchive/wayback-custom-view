@@ -101,7 +101,7 @@
         {% set users = [] %}
       {% endif %}
 
-      {% if data.data and data.data.author_id %}
+      {% id data.data and data.data.author_id %}
         {% set thisauthorid = data.data.author_id %}
       {% else %}
         {% set thisauthorid = "" %}
