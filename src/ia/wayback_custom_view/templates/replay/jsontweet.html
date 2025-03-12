@@ -94,28 +94,38 @@
     </section>
     {% if parsed_content %}
       {% set data = parsed_content %}
-      {% set newtext = data.data.text %}
+      
       {% if data.includes and data.includes.users %}
         {% set users = data.includes.users %}
       {% else %}
         {% set users = [] %}
       {% endif %}
+
+      {% id data.data and data.data.author_id %}
+        {% set thisauthorid = data.data.author_id %}
+      {% else %}
+        {% set thisauthorid = "" %}
+      {% endif %}
+
       {% if data.includes and data.includes.media %}
         {% set media_array = data.includes.media %}
       {% else %}
         {% set media_array = [] %}
       {% endif %}
+
       {% if data.includes and data.includes.tweets %}
         {% set quoted_tweets = data.includes.tweets %}
       {% else %}
         {% set quoted_tweets = [] %}
       {% endif %}
-      {% if data.data.entities and data.data.entities.urls %}
+
+      {% if data.data and data.data.entities and data.data.entities.urls %}
         {% set urls = data.data.entities.urls %}
       {% else %}
         {% set urls = [] %}
       {% endif %}
-      {% if data.data.text and urls %}
+
+      {% if data.data and data.data.text and urls %}
         {% set outtext = data.data.text %}
         {% set newtext = namespace(text=outtext) %}
         {% for url in urls %}
@@ -132,7 +142,7 @@
     <!-- {% set ddata = data %} -->
     <div class="tweet-container">
       {% for user in users %}
-      {% if user.id == data.data.author_id %}
+      {% if user.id == thisauthorid %}
       <div class="tweet-author">
         <div class="tweet-author-profile-image">
           <img src="{{ context.make_replay_url(user.profile_image_url, flags=['im']) }}" alt="{{ user.name }}" />
@@ -145,7 +155,6 @@
       {% endif %}
       {% endfor %}
       <div class="tweet-content">{{outtext | replace('\n', '<br />') }}
-        <!-- THIS IS FAILING REMOTELY -->
 				{% for media in media_array %}
 					{% if media.type == "photo" %}
 						<img class="tweet-image" src="{{ context.make_replay_image_url(media.url, flags=['im']) }}" />
@@ -167,16 +176,18 @@
               {% endwith %}
             {% endif %}
 				{% endfor %}
-				<p class="date"><a id="parentdate" href={{data.wayback_url}}></a></p>
+				<p class="date"><a id="parentdate" href="/" ></a></p>
 			</div>
       <script>
         console.log({{ data | tojson | safe }});
         console.log({{ urls | tojson | safe }});
-        console.log("{{ outtext }}");
+        // console.log("{{ outtext }}");
 				var dateString = "{{ data.data.created_at }}";
 				var date = new Date(dateString);
 				document.querySelector("#parentdate").innerText = date;
-      </script>
+        var currentURL = window.location.href;
+        document.querySelector("#parentdate").href = currentURL;
+        </script>
     </div>
     {% endif %}
   </body>
