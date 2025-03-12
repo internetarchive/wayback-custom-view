@@ -156,13 +156,29 @@
           {% if media.type == "photo" %}
             <img class="tweet-image" src="{{ media.url }}" />
           {% endif %}
-      {% endfor %}
+					{% if media.type == "video" %}
+						<video class="tweet-image tweet-video" controls>
+							{% for variant in media.variants %}
+								<source src="{{ variant.url }}" type="{{ variant.content_type }}">
+							{% endfor %}
+						</video>
+					{% endif %}
+        {% endfor %}
+				<!-- If there's a quoted tweet, embed it here! -->
+        <!-- THIS IS FAILING REMOTELY -->
+				{% for tweet in quoted_tweets %}
+            {% if tweet.id != data.data.id %}
+              {% with tweet=tweet %}
+                {% include 'replay/jsontweetquoted.html' %}
+              {% endwith %}
+            {% endif %}
+				{% endfor %}
 				<p class="date"><a id="parentdate" href="/" ></a></p>
 			</div>
       <script>
         console.log({{ data | tojson | safe }});
         console.log({{ media_array | tojson | safe }});
-        // console.log("{{ outtext }}");
+        console.log({{ quoted_tweets | tojson | safe }});
 				var dateString = "{{ data.data.created_at }}";
 				var date = new Date(dateString);
 				document.querySelector("#parentdate").innerText = date;
@@ -172,7 +188,7 @@
     </div>
     {% else %}
       <div class="notice">
-        No parsed content!
+        Something went wrong! No parsed content!
       </div>
     {% endif %}
   </body>
