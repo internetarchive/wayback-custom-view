@@ -153,15 +153,15 @@
       {% endfor %}
       <div class="tweet-content">{{outtext | replace('\n', '<br />') }}
 				{% for media in media_array %}
-					{% if media.type == "photo" %}
-						<img class="tweet-image" src="{{ context.make_replay_image_url(media.url, flags=['im']) }}" />
-					{% endif %}
-				{% endfor %}
+          {% if media.type == "photo" %}
+            <img class="tweet-image" src="{{ media.url }}" />
+          {% endif %}
+      {% endfor %}
 				<p class="date"><a id="parentdate" href="/" ></a></p>
 			</div>
       <script>
         console.log({{ data | tojson | safe }});
-        console.log({{ urls | tojson | safe }});
+        console.log({{ media_array | tojson | safe }});
         // console.log("{{ outtext }}");
 				var dateString = "{{ data.data.created_at }}";
 				var date = new Date(dateString);
