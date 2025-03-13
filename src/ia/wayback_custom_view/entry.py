@@ -5,9 +5,9 @@ def hello_world():
     """simple function to test if Python functions can be exposed to templates"""
     return 'hello_world!'
 
-def get_timestamp(wayback_full_url):
-    """get timestamp from request"""
-    return wayback_full_url.split('/')[2]
+# def get_timestamp(wayback_full_url):
+#     """get timestamp from request"""
+#     return wayback_full_url.split('/')[2]
 
 # def make_replay_image_url(absurl, timestamp="", flags=None):
 #     """make playback URL for the target URL `url` at time `timestamp`,
@@ -33,8 +33,8 @@ gwb_custom_view = {
         'template': 'jsontweet',
         'tvars': {
             # can expose Python objects to template
-            'hello_world': hello_world,
-            'get_timestamp': get_timestamp,
+            'hello_world': hello_world
+            # 'get_timestamp': get_timestamp,
             # 'make_replay_image_url': make_replay_image_url
         }
     }
