@@ -5,11 +5,11 @@ def hello_world():
     """simple function to test if Python functions can be exposed to templates"""
     return 'hello_world!'
 
-def get_timestamp(url):
+def get_timestamp(wayback_full_url):
     """get timestamp from request"""
-    return url.split('/')[2]
+    return wayback_full_url.split('/')[2]
 
-def make_replay_image_url(absurl, baseurl, flags=None):
+def make_replay_image_url(absurl, timestamp, flags=None):
     """make playback URL for the target URL `url` at time `timestamp`,
     and `flags`. This version can only generate absolute URL (no `style`
     argument.) for production wayback (web.archive.org)
@@ -19,8 +19,8 @@ def make_replay_image_url(absurl, baseurl, flags=None):
     base_url = 'https://web.archive.org/web'
     stripped_url = absurl.rsplit('.',1)[0]
     extension = absurl.rsplit('.',1)[1]
-    timestamp = get_timestamp(baseurl)
-    timestamp = timestamp.decode('latin1')
+    # timestamp = get_timestamp(capture_url)
+    # timestamp = timestamp.decode('latin1')
     if flags:
         timestamp += ''.join(f'{fl}_' for fl in flags)
     return f'{base_url}/{timestamp}/{stripped_url}?name=orig&format={extension}'

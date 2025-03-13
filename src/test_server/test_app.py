@@ -122,7 +122,7 @@ class ReplayContext:
         extension = absurl.rsplit('.',1)[1]
         if timestamp is None:
             timestamp = self.default_timestamp
-        timestamp = timestamp.decode('latin1')
+        # timestamp = timestamp.decode('latin1')
         if flags:
             timestamp += ''.join(f'{fl}_' for fl in flags)
         return f'{self.base_url}/{timestamp}/{stripped_url}?name=orig&format={extension}'
@@ -135,3 +135,8 @@ class ReplayContext:
             return f'{self.base_url}/timemap/link/{absurl}'
         else:
             return f'{self.base_url}/*/{absurl}{"*" if prefix else ""}'
+        
+    def get_timestamp(self, wayback_full_url):
+        """get timestamp from request"""
+        return wayback_full_url.split('/')[4]
+
