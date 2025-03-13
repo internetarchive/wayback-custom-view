@@ -94,6 +94,9 @@ class CustomViewTestApp:
         return self._render('replay/jsontweet.html', tvars, headers=headers)
 
 class ReplayContext:
+    """ stripped-down replica of wayback.replay.core.ReplayContext for testing.
+    TODO: add methods added for this module in entry.py!
+    """
     def __init__(self, default_timestamp: bytes):
         """stripped-down replica of wayback.replay.core.ReplayContext.
         """
