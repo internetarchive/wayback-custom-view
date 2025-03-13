@@ -136,12 +136,13 @@ class ReplayContext:
         else:
             return f'{self.base_url}/*/{absurl}{"*" if prefix else ""}'
         
-    def get_timestamp(self, wayback_full_url):
-        """get timestamp from request"""
-        return wayback_full_url.split('/')[4]
+    # def get_timestamp(self, wayback_full_url):
+    #     """get timestamp from request"""
+    #     return wayback_full_url.split('/')[4]
 
     def rework_image_url(self, absurl):
         """strip extension off of URL, add "?name=orig&format={extension}
+        this is mirrored from entry.py for testing!
         """
         stripped_url = absurl.rsplit('.',1)[0]
         extension = absurl.rsplit('.',1)[1]

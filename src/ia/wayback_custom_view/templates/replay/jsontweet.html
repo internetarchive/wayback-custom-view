@@ -163,7 +163,7 @@
 					{% if media.type == "video" %}
 						<video class="tweet-image tweet-video" controls>
 							{% for variant in media.variants %}
-								<source src="{{ context.make_replay_url(rework_image_url(variant.url), flags=['im']) }}" type="{{ variant.content_type }}">
+								<source src="{{ context.make_replay_url(variant.url, flags=['im'])  }}" type="{{ variant.content_type }}">
 							{% endfor %}
 						</video>
 					{% endif %}
