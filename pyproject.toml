@@ -22,6 +22,9 @@ dev = [
   "urllib3"
 ]
 
+[project.entry-points."gwb.custom_view"]
+jsontweet = "ia.wayback_custom_view.entry:gwb_custom_view"
+
 [tool.setuptools.dynamic]
 version = {attr = "ia.wayback_custom_view.__version__"}
 
