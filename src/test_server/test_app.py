@@ -1,14 +1,10 @@
 import re
 import json
-import logging
-import sys
 from urllib.parse import urlsplit
 from urllib.request import urlopen
 from jinja2 import Environment, PackageLoader
 from werkzeug.wrappers import Request, Response
 from werkzeug.exceptions import NotFound
-
-logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
 
 class CustomViewTestApp:
     _config = {
