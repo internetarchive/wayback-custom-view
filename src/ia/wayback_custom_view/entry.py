@@ -5,7 +5,11 @@ def hello_world():
     """simple function to test if Python functions can be exposed to templates"""
     return 'hello_world!'
 
-def make_replay_image_url(absurl, timestamp=None, flags=None):
+def get_timestamp(url):
+    """get timestamp from request"""
+    return url.split('/')[2]
+
+def make_replay_image_url(absurl, baseurl, flags=None):
     """make playback URL for the target URL `url` at time `timestamp`,
     and `flags`. This version can only generate absolute URL (no `style`
     argument.) for production wayback (web.archive.org)
@@ -15,8 +19,7 @@ def make_replay_image_url(absurl, timestamp=None, flags=None):
     base_url = 'https://web.archive.org/web'
     stripped_url = absurl.rsplit('.',1)[0]
     extension = absurl.rsplit('.',1)[1]
-    if timestamp is None:
-        timestamp = self.default_timestamp
+    timestamp = get_timestamp(baseurl)
     timestamp = timestamp.decode('latin1')
     if flags:
         timestamp += ''.join(f'{fl}_' for fl in flags)
@@ -31,7 +34,8 @@ gwb_custom_view = {
         'tvars': {
             # can expose Python objects to template
             'hello_world': hello_world,
-            # 'make_replay_image_url': make_replay_image_url
+            'get_timestamp': get_timestamp,
+            'make_replay_image_url': make_replay_image_url
         }
     }
 }
