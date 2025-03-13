@@ -140,3 +140,9 @@ class ReplayContext:
         """get timestamp from request"""
         return wayback_full_url.split('/')[4]
 
+    def rework_image_url(self, absurl):
+        """strip extension off of URL, add "?name=orig&format={extension}
+        """
+        stripped_url = absurl.rsplit('.',1)[0]
+        extension = absurl.rsplit('.',1)[1]
+        return f'{stripped_url}?name=orig&format={extension}'
