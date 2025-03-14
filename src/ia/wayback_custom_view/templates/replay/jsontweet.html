@@ -131,7 +131,7 @@
         {% endfor %}
         {% set outtext = newtext.text %}
       {% else %}
-        {% set outtext = "" %}
+        {% set outtext = data.data.text %}
       {% endif %}
 
       {% if not rework_image_url %}
