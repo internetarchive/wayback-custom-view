@@ -117,21 +117,31 @@
         {% set quoted_tweets = [] %}
       {% endif %}
 
+      {% if data.data and data.data.text %}
+        {% set text = data.data.text %}
+      {% else %}
+        {% set text = "" %}
+      {% endif %}
+
+      {% if data.data and data.data.note_tweet and data.data.note_tweet.text %}
+        {% set text = data.data.note_tweet.text %}
+      {% endif %}
+
       {% if data.data and data.data.entities and data.data.entities.urls %}
         {% set urls = data.data.entities.urls %}
       {% else %}
         {% set urls = [] %}
       {% endif %}
 
-      {% if data.data and data.data.text and urls %}
-        {% set outtext = data.data.text %}
+      {% if text and urls %}
+        {% set outtext = text %}
         {% set newtext = namespace(text=outtext) %}
         {% for url in urls %}
           {% set newtext.text = newtext.text.replace(url.url,"") %}
         {% endfor %}
         {% set outtext = newtext.text %}
       {% else %}
-        {% set outtext = data.data.text %}
+        {% set outtext = text %}
       {% endif %}
 
       {% if not rework_image_url %}
