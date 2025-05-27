@@ -194,7 +194,7 @@
         {% set newtext = namespace(text=outtext) %}
         {% for url in urls %}
           {% if url.unwound_url %}
-            {% set cleanedurl = context.make_replay_url(url.unwound_url, flags=['im']) %}
+            {% set cleanedurl = context.make_replay_url(url.unwound_url) %}
             {% set replacement = 
               '<a href="' ~ cleanedurl ~ '" target="_blank" rel="noopener noreferrer">' ~ url.url ~ "</a>" %}
           {% else %}
