@@ -54,7 +54,10 @@
 
       .tweet-author-profile-image img {
         width: 48px;
+        max-width: 48px;
         height: 48px;
+        max-height: 48px;
+        overflow: hidden;
         border-radius: 50%;
         margin-right: 5px;
       }
@@ -117,15 +120,38 @@
       
       {% if data.includes and data.includes.users %}
         {% set users = data.includes.users %}
+        {% set oldschool = false %}
       {% else %}
-        {% set users = [] %}
+        {% if data.user %}
+          {% set oldschool = true %}
+          {% set users = [data.user] %}
+        {% else %}
+          {% set users = [] %}
+        {% endif %}
       {% endif %}
 
       {% if data.data and data.data.author_id %}
         {% set thisauthorid = data.data.author_id %}
       {% else %}
-        {% set thisauthorid = "" %}
+        {% if data.user and data.user.id %}
+          {% set thisauthorid = data.user.id %}
+        {% else %}
+          {% set thisauthorid = "" %}
+        {% endif %}
       {% endif %}
+
+      {% if data.data and data.data.created_at %}
+        {% set created_at = data.data.created_at %}
+      {% else %}
+        {% if data.created_at %}
+          {% set created_at = data.created_at %}
+        {% else %}        
+          {% set created_at = "" %}
+        {% endif %}
+      {% endif %}
+
+
+
 
       {% if data.includes and data.includes.media %}
         {% set media_array = data.includes.media %}
@@ -142,7 +168,11 @@
       {% if data.data and data.data.text %}
         {% set text = data.data.text %}
       {% else %}
-        {% set text = "" %}
+        {% if data.text %}
+          {% set text = data.text %}
+        {% else %}
+          {% set text = "" %}
+        {% endif %}
       {% endif %}
 
       {% if data.data and data.data.note_tweet and data.data.note_tweet.text %}
@@ -152,14 +182,25 @@
       {% if data.data and data.data.entities and data.data.entities.urls %}
         {% set urls = data.data.entities.urls %}
       {% else %}
-        {% set urls = [] %}
+        {% if data.entities and data.entities.urls %}
+          {% set urls = data.entities.urls %}
+        {% else %}
+          {% set urls = [] %}
+        {% endif %}
       {% endif %}
 
       {% if text and urls %}
         {% set outtext = text %}
         {% set newtext = namespace(text=outtext) %}
         {% for url in urls %}
-          {% set newtext.text = newtext.text.replace(url.url,"") %}
+          {% if url.unwound_url %}
+            {% set cleanedurl = context.make_replay_url(url.unwound_url, flags=['im']) %}
+            {% set replacement = 
+              '<a href="' ~ cleanedurl ~ '" target="_blank" rel="noopener noreferrer">' ~ url.url ~ "</a>" %}
+          {% else %}
+              {% set replacement = "" %}
+          {% endif %}
+          {% set newtext.text = newtext.text.replace(url.url, replacement) %}
         {% endfor %}
         {% set outtext = newtext.text %}
       {% else %}
@@ -189,6 +230,7 @@
         {% endif %}
         {% endfor %}
         <div class="tweet-content">{{outtext | replace('\n', '<br />') }}
+
           {% for media in media_array %}
             {% if media.type == "photo" %}
               <img class="tweet-image" src="{{ context.make_replay_url(rework_image_url(media.url), flags=['im']) }}" />
@@ -220,14 +262,15 @@
     </div>
 
     <script>
-      // console.log({{ data | tojson | safe }});
+      console.log({{ data | tojson | safe }});
+      console.log({{ urls | tojson | safe }});
       // console.log({{ media_array | tojson | safe }});
       // console.log({{ quoted_tweets | tojson | safe }});
       // console.log("context.make_replay_url: {{ context.make_replay_url }}");
       // console.log("context.rework_image_url: {{ context.rework_image_url }}");
       // console.log("context.make_query_url: {{ context.make_query_url }}");
       // console.log("rework_image_url: {{ rework_image_url }}");
-      var dateString = "{{ data.data.created_at }}";
+      var dateString = "{{ created_at }}";
       var date = new Date(dateString);
       var currentURL = window.location.href;
       document.querySelector("#parentdate").innerText = date;
@@ -263,6 +306,10 @@
     {% else %}
       <div class="notice">
         Something went wrong! No parsed content!
+      </div>
+      <div id="jsonview" class="tweet-container off">
+        <h2>JSON</h2>
+        <pre>{{ data | tojson(indent=2) }}</pre>
       </div>
     {% endif %}
   </body>
