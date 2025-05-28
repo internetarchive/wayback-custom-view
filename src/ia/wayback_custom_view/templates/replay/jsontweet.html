@@ -145,18 +145,20 @@
       {% else %}
         {% if data.created_at %}
           {% set created_at = data.created_at %}
-        {% else %}        
+        {% else %}   
           {% set created_at = "" %}
         {% endif %}
       {% endif %}
 
 
-
-
       {% if data.includes and data.includes.media %}
         {% set media_array = data.includes.media %}
       {% else %}
-        {% set media_array = [] %}
+      {% if oldschool and data.entities and data.entities.media %}
+          {% set media_array = data.entities.media %}
+        {% else %}
+          {% set media_array = [] %}
+        {% endif %}
       {% endif %}
 
       {% if data.includes and data.includes.tweets %}
@@ -204,7 +206,22 @@
         {% endfor %}
         {% set outtext = newtext.text %}
       {% else %}
-        {% set outtext = text %}
+        {% if oldschool and media_array %}
+          {% set outtext = text %}
+          {% set newtext = namespace(text=outtext) %}
+          {% for media in media_array %}
+            {% if media.expanded_url %}
+              {% set cleanedurl = context.make_replay_url(media.expanded_url) %}
+              {% set replacement = '<a href="' ~ cleanedurl ~ '" target="_blank" rel="noopener noreferrer">' ~ media.url ~ "</a>" %}
+            {% else %}
+              {% set replacement = "" %}
+            {% endif %}
+            {% set newtext.text = newtext.text.replace(media.url, replacement) %}
+          {% endfor %}
+          {% set outtext = newtext.text %}
+        {% else %}
+          {% set outtext = text %}
+        {% endif %}
       {% endif %}
 
       {% if not rework_image_url %}
@@ -224,7 +241,12 @@
           </div>
           <div class="tweet-author-info">
             <div class="tweet-author-name">{{ user.name }}</div>
+              <div class="tweet-author-username">{{ user.username }}</div>
+              {% if oldschool %}
+            <div class="tweet-author-username old">@{{ user.screen_name }}</div>
+              {% else %}
             <div class="tweet-author-username">@{{ user.username }}</div>
+              {% endif %}
           </div>
         </div>
         {% endif %}
@@ -233,7 +255,12 @@
 
           {% for media in media_array %}
             {% if media.type == "photo" %}
-              <img class="tweet-image" src="{{ context.make_replay_url(rework_image_url(media.url), flags=['im']) }}" />
+              {% if oldschool %}
+                {% set media_url = media.media_url_https %}
+              {% else %}
+                {% set media_url = rework_image_url(media.url) %}
+              {% endif %}
+              <img class="tweet-image" src="{{ context.make_replay_url(media_url, flags=['im']) }}" />
             {% endif %}
             {% if media.type == "video" %}
               <video class="tweet-image tweet-video" controls>
@@ -262,8 +289,9 @@
     </div>
 
     <script>
-      console.log({{ data | tojson | safe }});
-      console.log({{ urls | tojson | safe }});
+      // console.log({{ oldschool | tojson | safe }});
+      // console.log({{ data | tojson | safe }});
+      // console.log({{ urls | tojson | safe }});
       // console.log({{ media_array | tojson | safe }});
       // console.log({{ quoted_tweets | tojson | safe }});
       // console.log("context.make_replay_url: {{ context.make_replay_url }}");
