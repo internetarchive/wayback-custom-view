@@ -269,14 +269,13 @@
               </video>
             {% endif %}
           {% endfor %}
-          <!-- If there's a quoted tweet, embed it here! -->
-          <!-- THIS IS FAILING REMOTELY -->
+          <!-- If there's a quoted tweet, embed it here!-->
           {% for tweet in quoted_tweets %}
-              {% if tweet.id != data.data.id %}
-                {% with tweet=tweet %}
-                  {% include 'replay/jsontweetquoted.html' %}
-                {% endwith %}
-              {% endif %}
+            {% if tweet.id != data.data.id %}
+              {% with tweet=tweet %}
+                {% include 'replay/jsontweetquoted2.html' %}
+              {% endwith %}
+            {% endif %}
           {% endfor %}
           <p class="date"><a id="parentdate" href="/" ></a></p>
         </div>

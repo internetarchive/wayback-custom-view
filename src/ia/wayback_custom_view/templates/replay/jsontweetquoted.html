@@ -1,6 +1,24 @@
+    {% set tweetauthorid = tweet.author_id  %}
     {% set tweetdata = tweet %}
     {% set tweetid = tweetdata.id %}
-    {% set baseurl = "https://twitter.com/" + data.includes.users[1].username + "/status/" + tweetid %}
+    {% set outauthor = "" %}
+    {% set newauthor = namespace(authorid=outauthor) %}
+    {% for user in data.includes.users %}
+      {% if user.id == tweetauthorid %}
+      <script>console.log("User ID: ", "{{ user.id }}; author ID:","{{ tweetauthorid }}");</script>
+        {% set newauthor.authorid = user.username %}
+      {% endif %}
+    {% endfor %}
+    {% set outauthor = newauthor.authorid %}
+    {% set baseurl = "https://twitter.com/" + outauthor + "/status/" + tweetid %}
+    <!-- we want to get data.includes.tweets.entities[].urls-->
+    {% set media_array = [] %}
+    {% if data.includes and data.includes.media %}
+      {% for media in tweet.entities.urls %}
+        {% set _ = media_array.append(media) %}
+      {% endfor %}
+    {% endif %}
+    <!-- THIS IS FAILING for http://localhost:5000/web/20240605034627/https://twitter.com/panguqianxun/status/1798199680322396424 -->
     <div class="embedded-tweet-container">
       {% for user in users %}
       {% if user.id == tweetdata.author_id %}
@@ -17,7 +35,7 @@
       {% endfor %}
       <div class="tweet-content">{{tweetdata.text | replace('\n', '<br />') }}
 				{% for media in tweet.media_array %}
-					<img class="tweet-image" src="{{ context.make_replay_url(rework_image_url(media.url), flags=['im']) }}" />
+					<img class="tweet-image" src="{{ context.make_replay_url(rework_image_url(media.display_url), flags=['im']) }}" />
 				{% endfor %}
 			</div>
 			<p class="date"><a id="qt{{ tweetid }}" href="{{context.make_replay_url(baseurl)}}"></a></p>
@@ -27,9 +45,10 @@
 				document.getElementById("qt{{tweetid}}").innerText = date;
         // let True = true;
         // let False = false;
-        // console.log("Quoted tweet! Data: ");
-        // console.log({{ tweetdata   }});
+        // console.log("Quoted tweet data: ", {{ tweetdata }});
+        // console.log("Data: ", {{ data }});
         // console.log("Quoted tweet media array: ");
-        // console.log({{ media_array }})
+        // console.log({{ tweetdata.author_id }})
+        // console.log({{ data.includes.users }})
       </script>
     </div>
