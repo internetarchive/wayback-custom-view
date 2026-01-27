@@ -273,7 +273,7 @@
           {% for tweet in quoted_tweets %}
             {% if tweet.id != data.data.id %}
               {% with tweet=tweet %}
-                {% include 'replay/jsontweetquoted2.html' %}
+                {% include 'replay/jsontweetquoted.html' %}
               {% endwith %}
             {% endif %}
           {% endfor %}
