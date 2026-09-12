@@ -35,7 +35,8 @@ def rework_image_url(absurl):
 
 gwb_custom_view = {
     'urlkey_match': [
-        re.compile(r'com,twitter\)/[^/]+/status/\d+$')
+        re.compile(r'com,twitter\)/[^/]+/status/\d+$'),
+        re.compile(r'com,twimg,syndication,cdn\)/tweet-result\?id=\d+$')
     ],
     'view':  {
         'template': 'jsontweet',

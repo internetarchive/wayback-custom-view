@@ -53,7 +53,7 @@ class CustomViewTestApp:
 
             uc = urlsplit(target_uri)
             if uc.netloc in ('twitter.com',
-                            'x.com') and (m := re.match(r'/[^/]+/status/\d+', uc.path)):
+                            'x.com', 'cdn.syndication.twimg.com') and ((m := re.match(r'/[^/]+/status/\d+', uc.path)) or (uc.path == '/tweet-result')):
                 return self.twitter_post(req, timestamp, target_uri)
 
         return NotFound()
@@ -69,7 +69,7 @@ class CustomViewTestApp:
         # path part of the location header, so that test app location is updated.
         r = urlopen(wayback_url, timeout=20)
         assert r.status == 200
-        assert r.getheader('Content-Type') == 'application/json'
+        assert 'application/json' in r.getheader('Content-Type')
 
         error = None
         try:
