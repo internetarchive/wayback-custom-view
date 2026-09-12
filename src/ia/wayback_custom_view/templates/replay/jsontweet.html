@@ -159,6 +159,8 @@
       {% else %}
         {% if data.user and data.user.id %}
           {% set thisauthorid = data.user.id %}
+        {% elif data.user and data.user.id_str %}
+          {% set thisauthorid = data.user.id_str %}
         {% else %}
           {% set thisauthorid = "" %}
         {% endif %}
@@ -268,10 +270,10 @@
     <div class="tweet-container on">
       <div id="nonjsonview">
         {% for user in users %}
-        {% if user.id == thisauthorid %}
+        {% if user.id == thisauthorid or user.id_str == thisauthorid %}
         <div class="tweet-author">
           <div class="tweet-author-profile-image">
-            <img src="{{ context.make_replay_url(user.profile_image_url, flags=['im']) }}" alt="{{ user.name }}" />
+            <img src="{{ context.make_replay_url(user.profile_image_url or user.profile_image_url_https, flags=['im']) }}" alt="{{ user.name }}" />
           </div>
           <div class="tweet-author-info">
             <div class="tweet-author-name">{{ user.name }}</div>
