@@ -11,14 +11,12 @@
     {% endfor %}
     {% set outauthor = newauthor.authorid %}
     {% set baseurl = "https://twitter.com/" + outauthor + "/status/" + tweetid %}
-    <!-- we want to get data.includes.tweets.entities[].urls-->
     {% set media_array = [] %}
     {% if data.includes and data.includes.media %}
       {% for media in tweet.entities.urls %}
         {% set _ = media_array.append(media) %}
       {% endfor %}
     {% endif %}
-    <!-- THIS IS FAILING for http://localhost:5000/web/20240605034627/https://twitter.com/panguqianxun/status/1798199680322396424 -->
     <div class="embedded-tweet-container">
       {% for user in users %}
       {% if user.id == tweetdata.author_id %}
